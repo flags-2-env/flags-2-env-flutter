@@ -4,18 +4,18 @@ import 'api/models.dart';
 import 'widgets/status_card.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.status});
+
+  final ConnectionStatus status;
 
   @override
   Widget build(BuildContext context) {
-    const status = ConnectionStatus(connected: false, endpoint: 'unset');
     return Scaffold(
       appBar: AppBar(title: const Text('flags-2-env')),
-      body: const Padding(
-        padding: EdgeInsets.all(24),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
         child: StatusCard(status: status),
       ),
     );
   }
 }
-
