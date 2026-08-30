@@ -11,15 +11,26 @@ void main() {
     final status = client.snapshot();
     expect(
       status,
-      const ConnectionStatus(
-        connected: false,
-        endpoint: 'https://flags.example',
-      ),
+      const Disconnected(endpoint: 'https://flags.example'),
     );
 
     await tester.pumpWidget(Flags2EnvApp(status: status));
 
     expect(find.text('Not connected'), findsOneWidget);
     expect(find.text('https://flags.example'), findsOneWidget);
+  });
+
+  testWidgets('renders every closed connection-state variant', (tester) async {
+    const cases = <(ConnectionStatus, String)>[
+      (Disconnected(endpoint: 'https://flags.example'), 'Not connected'),
+      (Connecting(endpoint: 'https://flags.example'), 'Connecting'),
+      (Connected(endpoint: 'https://flags.example'), 'Connected'),
+      (ConnectionFailed(endpoint: 'https://flags.example'), 'Connection failed'),
+    ];
+
+    for (final (status, label) in cases) {
+      await tester.pumpWidget(Flags2EnvApp(status: status));
+      expect(find.text(label), findsOneWidget);
+    }
   });
 }
