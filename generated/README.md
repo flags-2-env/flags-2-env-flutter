@@ -1,6 +1,7 @@
 # `generated/` — frozen artifacts (read-only)
 
-This tree is **generated**. Do not hand-edit adapters here.
+This tree is **generated**. Do not hand-edit anything here except this
+README if you are documenting a local exception.
 
 Typical producers:
 
@@ -11,14 +12,18 @@ Typical producers:
 ## Read-only on disk
 
 After generate, artifact files are `chmod a-w` (0444). Directories stay
-writable so the generator can add files.
+writable so the generator can add files. The generator unfreezes, writes,
+then freezes again.
 
 **Git does not store the Unix write bit** — only the executable bit
 (100644 vs 100755). After `git clone` / `git checkout`, files come back
-writable. Restore the policy with the generator (`f2e generate`,
-`ridl generate`, `node src/generate.mjs`) or:
+writable. Restore the policy with:
 
 ```sh
+f2e generate          # or ridl generate / node src/generate.mjs
+# or
+chmod a-w generated/**/*.rs generated/**/*.ts generated/**/*.dart generated/**/*.json
+# or
 scripts/freeze-generated.sh
 ```
 
@@ -28,10 +33,13 @@ Do not `chmod u+w` and then commit a hand-edit. Change the source catalog
 ## JSON Schema (the contract)
 
 If `json-schema/` is present, those documents are JSON Schema 2020-12.
-Compile-time types are generated from that catalog. Runtime
-`check_os_env` / `checkOsEnv` / `validate()` must pass on real payloads,
-not only on types that compile. Unit tests should feed **valid** and
-**invalid** instances (missing required keys, wrong types, extra properties).
+They are the interchange contract across Rust, TypeScript, and Dart.
+
+- Compile-time types are generated *from* that catalog.
+- Runtime `check_os_env` / `checkOsEnv` / `validate()` must pass on real
+  payloads, not only on types that compile.
+- Unit tests should feed **valid** and **invalid** instances (missing
+  required keys, wrong types, extra properties).
 
 ```sh
 f2e check-contract --config .cli-flags.toml --json env.fixture.json
@@ -49,3 +57,5 @@ generated/*
 
 (Do not ignore the directory node itself as `generated/` — that prevents
 the `!README.md` exception from working.)
+
+Regenerate after clone; CI should fail if checked-in artifacts drift.
