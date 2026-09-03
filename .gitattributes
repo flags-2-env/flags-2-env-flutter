@@ -1,0 +1,3 @@
+generated/** linguist-generated=true
+generated/readme.md linguist-generated=false
+lib/src/env/generated.dart linguist-generated=true
