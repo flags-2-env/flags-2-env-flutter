@@ -25,5 +25,11 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - name: Capture resolved package lock for review
+        shell: bash
+        run: |
+          printf '%s\n' 'F2E_LOCK_BEGIN'
+          cat pubspec.lock
+          printf '%s\n' 'F2E_LOCK_END'
       - run: flutter analyze --fatal-infos --fatal-warnings
       - run: flutter test
