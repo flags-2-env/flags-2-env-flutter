@@ -25,5 +25,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - name: Verify resolved lockfile is committed
+        run: git diff --exit-code -- pubspec.lock
       - run: flutter analyze --fatal-infos --fatal-warnings
       - run: flutter test
